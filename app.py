@@ -61,12 +61,12 @@ class PDF(FPDF):
 st.sidebar.title("Resume Inputs")
 
 with st.sidebar.expander("1. Personal Details", expanded=False):
-    name = st.text_input("Full Name", "Joshua E. Doyle")
-    contact_info = st.text_input("Contact Line", "Robbinsdale, MN | 763.234.0901 | scoosch@gmail.com")
-    summary = st.text_area("Professional Summary", "Dedicated and customer-oriented IT professional with a passion for technology. Recently certified CompTIA A+ with a strong understanding of hardware, software, and networking. Proven ability to provide excellent customer service and resolve technical issues quickly and efficiently. Pivoting from a background in operations management to a full-time IT role.")
+    name = st.text_input("Full Name", "Joshua Doyle")
+    contact_info = st.text_input("Contact Line", "2600 York Ave N, Robbinsdale, MN 55422 | 763.234.0901 | scoosch@gmail.com")
+    summary = st.text_area("Professional Summary", "Dedicated and customer-oriented IT professional with a passion for technology. Recently certified CompTIA A+ with a strong understanding of hardware, software, and networking. Proven ability to provide excellent customer service and resolve technical issues quickly and efficiently in fast-paced environments.")
 
 with st.sidebar.expander("2. Technical Projects (The Pivot)", expanded=False):
-    st.info("💡 Highlight your Homelab & 3D Printing here.")
+    st.info("💡 These projects bridge the gap between your detailed history and your future in IT.")
     proj_1_role = st.text_input("Project 1 Role", "Home Lab Administrator")
     proj_1_tech = st.text_input("Project 1 Tech", "Proxmox, OPNsense, Cisco Networking")
     proj_1_date = st.text_input("Project 1 Date", "2024 - Present")
@@ -83,40 +83,38 @@ with st.sidebar.expander("2. Technical Projects (The Pivot)", expanded=False):
         "Troubleshot hardware failures involving extruder assemblies and thermal runaway protection.")
 
 with st.sidebar.expander("3. Professional Experience", expanded=True):
-    st.info("💡 Chronological Order: Current -> IT Job -> Chef")
-    
-    # Job 1 (Current)
-    st.markdown("### Job 1: Current Role")
-    job_1_role = st.text_input("Job 1 Title", "Customer Service Professional")
-    job_1_company = st.text_input("Job 1 Company", "Gotta Go Gotta Throw")
-    job_1_loc = st.text_input("Job 1 Location", "Golden Valley, MN")
-    job_1_date = st.text_input("Job 1 Date", "Aug 2020 - Present") 
+    # Job 1 (Arvig - Most Relevant IT)
+    st.markdown("### Job 1: IT Help Desk")
+    job_1_role = st.text_input("Job 1 Title", "Help Desk Technician")
+    job_1_company = st.text_input("Job 1 Company", "Arvig Enterprises")
+    job_1_loc = st.text_input("Job 1 Location", "Maple Grove/Edina, MN")
+    job_1_date = st.text_input("Job 1 Date", "March 2024 - January 2025") 
     job_1_bullets = st.text_area("Job 1 Details", 
-        "Answer customer service emails and resolve technical product inquiries.\n"
-        "Maintain inventory accuracy and organize staff to ensure efficient order fulfillment.\n"
-        "Troubleshoot shipping logistics and packing workflows to ensure safe delivery.")
+        "Provided technical support for internet, TV, and phone services, troubleshooting connectivity and hardware issues.\n"
+        "Diagnosed and resolved Tier 1 customer incidents using ticketing systems to track resolution status.\n"
+        "Guided users through remote troubleshooting steps to restore service functionality.")
 
-    # Job 2 (Arvig - IT Experience)
-    st.markdown("### Job 2: Relevant IT Experience")
-    job_2_role = st.text_input("Job 2 Title", "Help Desk Technician")
-    job_2_company = st.text_input("Job 2 Company", "Arvig Enterprises")
-    job_2_loc = st.text_input("Job 2 Location", "Maple Grove, MN")
-    job_2_date = st.text_input("Job 2 Date", "Feb 2018 - Feb 2020")
+    # Job 2 (Time Communications)
+    st.markdown("### Job 2: Remote Communications")
+    job_2_role = st.text_input("Job 2 Title", "Phone Operator")
+    job_2_company = st.text_input("Job 2 Company", "Time Communications")
+    job_2_loc = st.text_input("Job 2 Location", "Maple Grove/Edina, MN")
+    job_2_date = st.text_input("Job 2 Date", "September 2023 - March 2024")
     job_2_bullets = st.text_area("Job 2 Details", 
-        "Resolved Tier 1 technical issues regarding hardware, software, and network connectivity.\n"
-        "Managed user accounts and permissions via Active Directory.\n"
-        "Utilized ticketing systems to document incidents and ensure timely resolution SLAs.")
+        "Managed high-volume inbound calls with professional customer service standards.\n"
+        "Demonstrated reliability and time management while working independently in a remote environment.\n"
+        "Utilized communication software to route calls accurately and efficiently.")
 
-    # Job 3 (Pizza Luce - Management)
-    st.markdown("### Job 3: Management Experience")
-    job_3_role = st.text_input("Job 3 Title", "Restaurant Manager")
-    job_3_company = st.text_input("Job 3 Company", "Pizza Lucé")
-    job_3_loc = st.text_input("Job 3 Location", "Hopkins, MN")
-    job_3_date = st.text_input("Job 3 Date", "Feb 2015 - Aug 2017")
+    # Job 3 (Gotta Go Gotta Throw)
+    st.markdown("### Job 3: Logistics & Service")
+    job_3_role = st.text_input("Job 3 Title", "Customer Service Professional")
+    job_3_company = st.text_input("Job 3 Company", "Gotta Go Gotta Throw")
+    job_3_loc = st.text_input("Job 3 Location", "Golden Valley, MN")
+    job_3_date = st.text_input("Job 3 Date", "August 2020 - December 2022")
     job_3_bullets = st.text_area("Job 3 Details", 
-        "Managed a diverse team working in a fast-paced environment.\n"
-        "Creatively led company projects such as the Pizza Lucé Block Party and off-site events.\n"
-        "Handled financial reporting and large cash deposits with 100% accuracy.")
+        "Resolved customer inquiries via email and phone regarding product specifications and orders.\n"
+        "Organized warehouse inventory and coordinated shipping logistics for accurate order fulfillment.\n"
+        "Maintained store organization and led team efforts to ensure positive customer experiences.")
 
 with st.sidebar.expander("4. Leadership & Community", expanded=False):
     lead_role = st.text_input("Leadership Role", "League Coordinator")
@@ -135,7 +133,7 @@ with st.sidebar.expander("5. Education & Skills", expanded=False):
     school_2 = st.text_input("Institution 2", "Le Cordon Bleu College of Culinary Arts")
     edu_date_2 = st.text_input("Edu Date 2", "May 2007")
     
-    skills_tech = st.text_area("Technical Skills", "Hardware: PC Building, Troubleshooting, 3D Printers\nNetworking: TCP/IP, DNS, DHCP, Cisco IOS, Active Directory\nSoftware: Windows, Linux (Ubuntu), Proxmox VE, ServiceNow")
+    skills_tech = st.text_area("Technical Skills", "Hardware: PC Building, Troubleshooting, Hydraulic Testing\nNetworking: TCP/IP, DNS, DHCP, Cisco IOS, Active Directory\nSoftware: Windows, Linux (Ubuntu), Proxmox VE, ServiceNow")
 
 # --- LIVE PREVIEW GENERATION ---
 st.title("📄 Live Resume Preview")
