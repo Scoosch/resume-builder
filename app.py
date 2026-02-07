@@ -5,19 +5,32 @@ from fpdf import FPDF
 st.set_page_config(layout="wide", page_title="The Pivot Resume Builder")
 
 # --- CUSTOM CSS FOR PREVIEW ---
+# This ensures the paper looks like paper, even in Dark Mode
 st.markdown("""
 <style>
     .resume-preview {
         font-family: 'Times New Roman', Times, serif;
         background-color: white;
         padding: 40px;
-        color: black;
+        color: black !important; /* Force black text on white background */
         border: 1px solid #ddd;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        border-radius: 5px;
     }
-    h1 { text-align: center; text-transform: uppercase; font-size: 24px; margin-bottom: 5px; color: black; }
-    .contact-info { text-align: center; font-size: 14px; margin-bottom: 20px; }
-    h2 { 
+    .resume-preview h1 { 
+        text-align: center; 
+        text-transform: uppercase; 
+        font-size: 24px; 
+        margin-bottom: 5px; 
+        color: black;
+    }
+    .resume-preview .contact-info { 
+        text-align: center; 
+        font-size: 14px; 
+        margin-bottom: 20px; 
+        color: #333;
+    }
+    .resume-preview h2 { 
         text-transform: uppercase; 
         font-size: 16px; 
         border-bottom: 1px solid black; 
@@ -26,10 +39,28 @@ st.markdown("""
         padding-bottom: 2px;
         color: black;
     }
-    h3 { font-size: 14px; font-weight: bold; margin: 5px 0 2px 0; color: black; }
-    .sub-header { font-style: italic; font-size: 14px; display: flex; justify-content: space-between; }
-    ul { margin-top: 0; padding-left: 20px; font-size: 14px; }
-    li { margin-bottom: 2px; }
+    .resume-preview h3 { 
+        font-size: 14px; 
+        font-weight: bold; 
+        margin: 5px 0 2px 0; 
+        color: black;
+    }
+    .sub-header { 
+        font-style: italic; 
+        font-size: 14px; 
+        display: flex; 
+        justify-content: space-between; 
+        color: black;
+    }
+    .resume-preview ul { 
+        margin-top: 0; 
+        padding-left: 20px; 
+        font-size: 14px; 
+        color: black;
+    }
+    .resume-preview li { 
+        margin-bottom: 2px; 
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -49,7 +80,7 @@ class PDF(FPDF):
         self.cell(0, 5, role, 0, 1, 'L')
         self.set_font('Times', 'I', 11)
         self.cell(100, 5, company, 0, 0, 'L')
-        self.cell(0, 5, f"{location}  |  {date}", 0, 1, 'R')
+        self.cell(0, 5, f"{location} | {date}", 0, 1, 'R')
 
     def bullet_point(self, text):
         self.set_font('Times', '', 11)
@@ -83,7 +114,7 @@ with st.sidebar.expander("2. Technical Projects (The Pivot)", expanded=False):
         "Troubleshot hardware failures involving extruder assemblies and thermal runaway protection.")
 
 with st.sidebar.expander("3. Professional Experience", expanded=True):
-    # Job 1 (Arvig - Most Relevant IT)
+    # Job 1
     st.markdown("### Job 1: IT Help Desk")
     job_1_role = st.text_input("Job 1 Title", "Help Desk Technician")
     job_1_company = st.text_input("Job 1 Company", "Arvig Enterprises")
@@ -94,7 +125,7 @@ with st.sidebar.expander("3. Professional Experience", expanded=True):
         "Diagnosed and resolved Tier 1 customer incidents using ticketing systems to track resolution status.\n"
         "Guided users through remote troubleshooting steps to restore service functionality.")
 
-    # Job 2 (Time Communications)
+    # Job 2
     st.markdown("### Job 2: Remote Communications")
     job_2_role = st.text_input("Job 2 Title", "Phone Operator")
     job_2_company = st.text_input("Job 2 Company", "Time Communications")
@@ -105,7 +136,7 @@ with st.sidebar.expander("3. Professional Experience", expanded=True):
         "Demonstrated reliability and time management while working independently in a remote environment.\n"
         "Utilized communication software to route calls accurately and efficiently.")
 
-    # Job 3 (Gotta Go Gotta Throw)
+    # Job 3
     st.markdown("### Job 3: Logistics & Service")
     job_3_role = st.text_input("Job 3 Title", "Customer Service Professional")
     job_3_company = st.text_input("Job 3 Company", "Gotta Go Gotta Throw")
@@ -138,10 +169,14 @@ with st.sidebar.expander("5. Education & Skills", expanded=False):
 # --- LIVE PREVIEW GENERATION ---
 st.title("📄 Live Resume Preview")
 
-# PRE-FORMATTING TO PREVENT SYNTAX ERRORS
+# Helper function to generate HTML list items safely
+def get_bullets_html(text_input):
+    if not text_input:
+        return ""
+    return "".join(f'<li>{line}</li>' for line in text_input.split('\n') if line.strip())
+
 formatted_skills = skills_tech.replace('\n', '<br>')
 
-# Constructing HTML for Preview
 html_content = f"""
 <div class="resume-preview">
     <h1>{name}</h1>
@@ -153,29 +188,29 @@ html_content = f"""
     <h2>Technical Projects</h2>
     <h3>{proj_1_role}</h3>
     <div class="sub-header"><span>{proj_1_tech}</span><span>{proj_1_date}</span></div>
-    <ul>{"".join(f'<li>{line}</li>' for line in proj_1_bullets.split('\n') if line)}</ul>
+    <ul>{get_bullets_html(proj_1_bullets)}</ul>
     
     <h3>{proj_2_role}</h3>
     <div class="sub-header"><span>{proj_2_tech}</span><span>{proj_2_date}</span></div>
-    <ul>{"".join(f'<li>{line}</li>' for line in proj_2_bullets.split('\n') if line)}</ul>
+    <ul>{get_bullets_html(proj_2_bullets)}</ul>
 
     <h2>Professional Experience</h2>
     <h3>{job_1_role}</h3>
     <div class="sub-header"><span>{job_1_company}, {job_1_loc}</span><span>{job_1_date}</span></div>
-    <ul>{"".join(f'<li>{line}</li>' for line in job_1_bullets.split('\n') if line)}</ul>
+    <ul>{get_bullets_html(job_1_bullets)}</ul>
 
     <h3>{job_2_role}</h3>
     <div class="sub-header"><span>{job_2_company}, {job_2_loc}</span><span>{job_2_date}</span></div>
-    <ul>{"".join(f'<li>{line}</li>' for line in job_2_bullets.split('\n') if line)}</ul>
+    <ul>{get_bullets_html(job_2_bullets)}</ul>
 
     <h3>{job_3_role}</h3>
     <div class="sub-header"><span>{job_3_company}, {job_3_loc}</span><span>{job_3_date}</span></div>
-    <ul>{"".join(f'<li>{line}</li>' for line in job_3_bullets.split('\n') if line)}</ul>
+    <ul>{get_bullets_html(job_3_bullets)}</ul>
 
     <h2>Leadership & Community</h2>
     <h3>{lead_role}</h3>
     <div class="sub-header"><span>{lead_org}</span><span>{lead_date}</span></div>
-    <ul>{"".join(f'<li>{line}</li>' for line in lead_bullets.split('\n') if line)}</ul>
+    <ul>{get_bullets_html(lead_bullets)}</ul>
 
     <h2>Education & Certifications</h2>
     <p><strong>{degree}</strong>, {school} <span style="float:right">{edu_date}</span></p>
@@ -185,6 +220,8 @@ html_content = f"""
     <p>{formatted_skills}</p>
 </div>
 """
+
+# THIS IS THE KEY LINE THAT MAKES IT LOOK LIKE A RESUME:
 st.markdown(html_content, unsafe_allow_html=True)
 
 # --- PDF GENERATION LOGIC ---
@@ -256,10 +293,12 @@ def create_pdf():
     pdf.set_font('Times', '', 11)
     pdf.multi_cell(0, 5, skills_tech)
 
-    return pdf.output(dest='S').encode('latin-1')
+    # Using 'latin-1' with 'replace' prevents crashes from copy-pasted characters
+    return pdf.output(dest='S').encode('latin-1', 'replace')
 
 # --- DOWNLOAD BUTTON ---
 st.write("---")
+# We generate the PDF bytes only when the script runs
 pdf_bytes = create_pdf()
 st.download_button(
     label="Download PDF Resume",
