@@ -90,7 +90,7 @@ with st.sidebar.expander("3. Professional Experience", expanded=True):
     job_1_role = st.text_input("Job 1 Title", "Customer Service Professional")
     job_1_company = st.text_input("Job 1 Company", "Gotta Go Gotta Throw")
     job_1_loc = st.text_input("Job 1 Location", "Golden Valley, MN")
-    job_1_date = st.text_input("Job 1 Date", "Aug 2020 - Present") # Updated date based on resume start
+    job_1_date = st.text_input("Job 1 Date", "Aug 2020 - Present") 
     job_1_bullets = st.text_area("Job 1 Details", 
         "Answer customer service emails and resolve technical product inquiries.\n"
         "Maintain inventory accuracy and organize staff to ensure efficient order fulfillment.\n"
@@ -227,4 +227,45 @@ def create_pdf():
         for line in job_1_bullets.split('\n'): pdf.bullet_point(line)
         pdf.ln(3)
     if job_2_role:
-        pdf.section_content_header(job_2_role, job_2_company
+        pdf.section_content_header(job_2_role, job_2_company, job_2_loc, job_2_date)
+        for line in job_2_bullets.split('\n'): pdf.bullet_point(line)
+        pdf.ln(3)
+    if job_3_role:
+        pdf.section_content_header(job_3_role, job_3_company, job_3_loc, job_3_date)
+        for line in job_3_bullets.split('\n'): pdf.bullet_point(line)
+        pdf.ln(3)
+
+    # Leadership
+    if lead_role:
+        pdf.section_title("Leadership & Community")
+        pdf.section_content_header(lead_role, lead_org, "", lead_date)
+        for line in lead_bullets.split('\n'): pdf.bullet_point(line)
+        pdf.ln(3)
+
+    # Education & Skills
+    pdf.section_title("Education & Skills")
+    pdf.set_font('Times', '', 11)
+    if degree:
+        pdf.cell(140, 5, f"{degree}, {school}", 0, 0)
+        pdf.cell(0, 5, edu_date, 0, 1, 'R')
+    if degree_2:
+        pdf.cell(140, 5, f"{degree_2}, {school_2}", 0, 0)
+        pdf.cell(0, 5, edu_date_2, 0, 1, 'R')
+    pdf.ln(3)
+    
+    pdf.set_font('Times', 'B', 11)
+    pdf.cell(0, 5, "Technical Skills:", 0, 1)
+    pdf.set_font('Times', '', 11)
+    pdf.multi_cell(0, 5, skills_tech)
+
+    return pdf.output(dest='S').encode('latin-1')
+
+# --- DOWNLOAD BUTTON ---
+st.write("---")
+pdf_bytes = create_pdf()
+st.download_button(
+    label="Download PDF Resume",
+    data=pdf_bytes,
+    file_name="resume.pdf",
+    mime="application/pdf"
+)
