@@ -36,7 +36,7 @@ st.markdown("""
 # --- PDF GENERATOR CLASS ---
 class PDF(FPDF):
     def header(self):
-        pass # Margins handle the spacing
+        pass 
 
     def section_title(self, label):
         self.set_font('Times', 'B', 12)
@@ -65,7 +65,7 @@ with st.sidebar.expander("1. Personal Details", expanded=False):
     contact_info = st.text_input("Contact Line", "Robbinsdale, MN | (555) 123-4567 | scoosch@example.com")
     summary = st.text_area("Professional Summary", "Culinary professional and self-taught technologist pivoting into IT. Proven ability to troubleshoot complex systems, manage time-sensitive workflows, and apply technical skills in networking and hardware management. CompTIA A+ Certified.")
 
-with st.sidebar.expander("2. Technical Projects (The Pivot)", expanded=True):
+with st.sidebar.expander("2. Technical Projects (The Pivot)", expanded=False):
     st.info("💡 Highlight your Homelab & 3D Printing here.")
     proj_1_role = st.text_input("Project 1 Role", "Home Lab Administrator")
     proj_1_tech = st.text_input("Project 1 Tech", "Proxmox, OPNsense, Cisco Networking")
@@ -82,10 +82,11 @@ with st.sidebar.expander("2. Technical Projects (The Pivot)", expanded=True):
         "Maintained and calibrated Bambu Lab 3D printers for high-precision manufacturing.\n"
         "Troubleshot hardware failures involving extruder assemblies and thermal runaway protection.")
 
-with st.sidebar.expander("3. Professional Experience (Mgmt & Ops)", expanded=True):
-    st.info("💡 We added your Chef experience here to show Management skills.")
+with st.sidebar.expander("3. Professional Experience", expanded=True):
+    st.info("💡 Chronological Order: Current -> IT Job -> Chef")
     
-    # Job 1 (Current/Retail)
+    # Job 1 (Current)
+    st.markdown("### Job 1: Current Role")
     job_1_role = st.text_input("Job 1 Title", "Retail & Customer Service Associate")
     job_1_company = st.text_input("Job 1 Company", "Local Frisbee Shop")
     job_1_loc = st.text_input("Job 1 Location", "Minneapolis, MN")
@@ -94,31 +95,40 @@ with st.sidebar.expander("3. Professional Experience (Mgmt & Ops)", expanded=Tru
         "Manage inventory tracking and point-of-sale systems accuracy.\n"
         "Provide technical product advice, requiring rapid learning of new inventory specs.")
 
-    # Job 2 (Restaurant/Management)
-    st.markdown("---")
-    job_2_role = st.text_input("Job 2 Title", "Executive Chef / Kitchen Manager")
-    job_2_company = st.text_input("Job 2 Company", "High-Volume Restaurant Group")
+    # Job 2 (Arvig - IT Experience)
+    st.markdown("### Job 2: Relevant IT Experience")
+    job_2_role = st.text_input("Job 2 Title", "Help Desk Technician")
+    job_2_company = st.text_input("Job 2 Company", "Arvig")
     job_2_loc = st.text_input("Job 2 Location", "Minneapolis, MN")
-    job_2_date = st.text_input("Job 2 Date", "2015 - 2023")
+    job_2_date = st.text_input("Job 2 Date", "2023 - 2024")
     job_2_bullets = st.text_area("Job 2 Details", 
-        "Managed back-of-house operations, including staff scheduling, inventory logistics, and vendor relations.\n"
-        "Implemented cost-control systems reducing waste by 15% through strict inventory tracking.\n"
-        "Maintained compliance with strict health and safety protocols under high-pressure conditions.")
+        "Resolved Tier 1 technical issues regarding hardware, software, and network connectivity.\n"
+        "Managed user accounts and permissions via Active Directory.\n"
+        "Utilized ticketing systems to document incidents and ensure timely resolution SLAs.")
 
-with st.sidebar.expander("4. Leadership & Community", expanded=True):
+    # Job 3 (Chef - Management)
+    st.markdown("### Job 3: Management Experience")
+    job_3_role = st.text_input("Job 3 Title", "Executive Chef / Kitchen Manager")
+    job_3_company = st.text_input("Job 3 Company", "High-Volume Restaurant Group")
+    job_3_loc = st.text_input("Job 3 Location", "Minneapolis, MN")
+    job_3_date = st.text_input("Job 3 Date", "2015 - 2023")
+    job_3_bullets = st.text_area("Job 3 Details", 
+        "Managed back-of-house operations, including staff scheduling, inventory logistics, and vendor relations.\n"
+        "Implemented cost-control systems reducing waste by 15% through strict inventory tracking.")
+
+with st.sidebar.expander("4. Leadership & Community", expanded=False):
     lead_role = st.text_input("Leadership Role", "League Coordinator")
     lead_org = st.text_input("Organization", "Twin Cities Disc Golf League")
     lead_date = st.text_input("Leadership Date", "2018 - Present")
     lead_bullets = st.text_area("Leadership Details", 
         "Organize weekly events for 50+ members, managing scheduling and digital scorekeeping.\n"
-        "Facilitate conflict resolution and enforce league rules to ensure fair play.\n"
-        "Coordinate with local parks departments for course maintenance and event permits.")
+        "Facilitate conflict resolution and enforce league rules to ensure fair play.")
 
 with st.sidebar.expander("5. Education & Skills", expanded=False):
     degree = st.text_input("Degree/Cert", "CompTIA A+ Certification")
     school = st.text_input("Institution", "CompTIA")
     edu_date = st.text_input("Edu Date", "2023")
-    skills_tech = st.text_area("Technical Skills", "Hardware: PC Building, Troubleshooting, 3D Printers\nNetworking: TCP/IP, DNS, DHCP, Cisco IOS\nSoftware: Windows, Linux (Ubuntu), Proxmox VE")
+    skills_tech = st.text_area("Technical Skills", "Hardware: PC Building, Troubleshooting, 3D Printers\nNetworking: TCP/IP, DNS, DHCP, Cisco IOS, Active Directory\nSoftware: Windows, Linux (Ubuntu), Proxmox VE, ServiceNow")
 
 # --- LIVE PREVIEW GENERATION ---
 st.title("📄 Live Resume Preview")
@@ -150,6 +160,10 @@ html_content = f"""
     <div class="sub-header"><span>{job_2_company}, {job_2_loc}</span><span>{job_2_date}</span></div>
     <ul>{"".join(f'<li>{line}</li>' for line in job_2_bullets.split('\n') if line)}</ul>
 
+    <h3>{job_3_role}</h3>
+    <div class="sub-header"><span>{job_3_company}, {job_3_loc}</span><span>{job_3_date}</span></div>
+    <ul>{"".join(f'<li>{line}</li>' for line in job_3_bullets.split('\n') if line)}</ul>
+
     <h2>Leadership & Community</h2>
     <h3>{lead_role}</h3>
     <div class="sub-header"><span>{lead_org}</span><span>{lead_date}</span></div>
@@ -159,80 +173,4 @@ html_content = f"""
     <p><strong>{degree}</strong>, {school} <span style="float:right">{edu_date}</span></p>
 
     <h2>Technical Skills</h2>
-    <p>{skills_tech.replace(chr(10), '<br>')}</p>
-</div>
-"""
-st.markdown(html_content, unsafe_allow_html=True)
-
-# --- PDF GENERATION LOGIC ---
-def create_pdf():
-    pdf = PDF()
-    pdf.add_page()
-    pdf.set_margins(20, 20, 20)
-    
-    # Header
-    pdf.set_font('Times', 'B', 24)
-    pdf.cell(0, 10, name.upper(), 0, 1, 'C')
-    pdf.set_font('Times', '', 10)
-    pdf.cell(0, 5, contact_info, 0, 1, 'C')
-    pdf.ln(5)
-
-    # Summary
-    if summary:
-        pdf.section_title("Professional Summary")
-        pdf.set_font('Times', '', 11)
-        pdf.multi_cell(0, 5, summary)
-        pdf.ln(3)
-
-    # Technical Projects
-    pdf.section_title("Technical Projects")
-    if proj_1_role:
-        pdf.section_content_header(proj_1_role, proj_1_tech, "", proj_1_date)
-        for line in proj_1_bullets.split('\n'): pdf.bullet_point(line)
-        pdf.ln(3)
-    if proj_2_role:
-        pdf.section_content_header(proj_2_role, proj_2_tech, "", proj_2_date)
-        for line in proj_2_bullets.split('\n'): pdf.bullet_point(line)
-        pdf.ln(3)
-
-    # Experience
-    pdf.section_title("Professional Experience")
-    if job_1_role:
-        pdf.section_content_header(job_1_role, job_1_company, job_1_loc, job_1_date)
-        for line in job_1_bullets.split('\n'): pdf.bullet_point(line)
-        pdf.ln(3)
-    if job_2_role:
-        pdf.section_content_header(job_2_role, job_2_company, job_2_loc, job_2_date)
-        for line in job_2_bullets.split('\n'): pdf.bullet_point(line)
-        pdf.ln(3)
-
-    # Leadership
-    if lead_role:
-        pdf.section_title("Leadership & Community")
-        pdf.section_content_header(lead_role, lead_org, "", lead_date)
-        for line in lead_bullets.split('\n'): pdf.bullet_point(line)
-        pdf.ln(3)
-
-    # Education & Skills
-    pdf.section_title("Education & Skills")
-    pdf.set_font('Times', '', 11)
-    if degree:
-        pdf.cell(140, 5, f"{degree}, {school}", 0, 0)
-        pdf.cell(0, 5, edu_date, 0, 1, 'R')
-    pdf.ln(3)
-    pdf.set_font('Times', 'B', 11)
-    pdf.cell(0, 5, "Technical Skills:", 0, 1)
-    pdf.set_font('Times', '', 11)
-    pdf.multi_cell(0, 5, skills_tech)
-
-    return pdf.output(dest='S').encode('latin-1')
-
-# --- DOWNLOAD BUTTON ---
-st.write("---")
-pdf_bytes = create_pdf()
-st.download_button(
-    label="Download PDF Resume",
-    data=pdf_bytes,
-    file_name="resume.pdf",
-    mime="application/pdf"
-)
+    <p>{skills_tech.
