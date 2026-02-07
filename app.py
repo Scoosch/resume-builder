@@ -5,14 +5,13 @@ from fpdf import FPDF
 st.set_page_config(layout="wide", page_title="The Pivot Resume Builder")
 
 # --- CUSTOM CSS FOR PREVIEW ---
-# This ensures the paper looks like paper, even in Dark Mode
 st.markdown("""
 <style>
     .resume-preview {
         font-family: 'Times New Roman', Times, serif;
         background-color: white;
         padding: 40px;
-        color: black !important; /* Force black text on white background */
+        color: black !important;
         border: 1px solid #ddd;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         border-radius: 5px;
@@ -293,12 +292,10 @@ def create_pdf():
     pdf.set_font('Times', '', 11)
     pdf.multi_cell(0, 5, skills_tech)
 
-    # Using 'latin-1' with 'replace' prevents crashes from copy-pasted characters
     return pdf.output(dest='S').encode('latin-1', 'replace')
 
 # --- DOWNLOAD BUTTON ---
 st.write("---")
-# We generate the PDF bytes only when the script runs
 pdf_bytes = create_pdf()
 st.download_button(
     label="Download PDF Resume",
