@@ -1,74 +1,70 @@
 import streamlit as st
 from fpdf import FPDF
+import html
 
 # --- CONFIGURATION & PAGE SETUP ---
 st.set_page_config(layout="wide", page_title="The Pivot Resume Builder")
 
 # --- CUSTOM CSS FOR PREVIEW ---
-# This ensures the paper looks like paper, even in Dark Mode
 st.markdown("""
 <style>
-    .resume-preview {
-        font-family: 'Times New Roman', Times, serif;
-        background-color: white;
-        padding: 40px;
+    /* Force override Streamlit's styles with more specific selectors */
+    div[data-testid="stMarkdownContainer"] .resume-preview {
+        font-family: 'Times New Roman', Times, serif !important;
+        background-color: white !important;
+        padding: 40px !important;
         color: black !important;
-        border: 1px solid #ddd;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        border-radius: 5px;
-        margin-bottom: 20px;
+        border: 1px solid #ddd !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
+        border-radius: 5px !important;
+        margin-bottom: 20px !important;
     }
-    .resume-preview h1 { 
-        text-align: center; 
-        text-transform: uppercase; 
-        font-size: 24px; 
-        margin-bottom: 5px; 
+    div[data-testid="stMarkdownContainer"] .resume-preview * {
         color: black !important;
     }
-    .resume-preview .contact-info { 
-        text-align: center; 
-        font-size: 14px; 
-        margin-bottom: 20px; 
-        color: #333 !important;
+    div[data-testid="stMarkdownContainer"] .resume-preview h1 { 
+        text-align: center !important; 
+        text-transform: uppercase !important; 
+        font-size: 24px !important; 
+        margin-bottom: 5px !important; 
     }
-    .resume-preview h2 { 
-        text-transform: uppercase; 
-        font-size: 16px; 
-        border-bottom: 1px solid black; 
-        margin-top: 20px; 
-        margin-bottom: 10px; 
-        padding-bottom: 2px;
-        color: black !important;
+    div[data-testid="stMarkdownContainer"] .resume-preview .contact-info { 
+        text-align: center !important; 
+        font-size: 14px !important; 
+        margin-bottom: 20px !important; 
     }
-    .resume-preview h3 { 
-        font-size: 14px; 
-        font-weight: bold; 
-        margin: 5px 0 2px 0; 
-        color: black !important;
+    div[data-testid="stMarkdownContainer"] .resume-preview h2 { 
+        text-transform: uppercase !important; 
+        font-size: 16px !important; 
+        border-bottom: 1px solid black !important; 
+        margin-top: 20px !important; 
+        margin-bottom: 10px !important; 
+        padding-bottom: 2px !important;
     }
-    .resume-preview p {
-        color: black !important;
-        margin: 5px 0;
-        font-size: 14px;
+    div[data-testid="stMarkdownContainer"] .resume-preview h3 { 
+        font-size: 14px !important; 
+        font-weight: bold !important; 
+        margin: 5px 0 2px 0 !important; 
     }
-    .sub-header { 
-        font-style: italic; 
-        font-size: 14px; 
-        display: flex; 
-        justify-content: space-between; 
-        color: black !important;
-        margin-bottom: 5px;
+    div[data-testid="stMarkdownContainer"] .resume-preview p {
+        margin: 5px 0 !important;
+        font-size: 14px !important;
     }
-    .resume-preview ul { 
-        margin-top: 0; 
-        padding-left: 20px; 
-        font-size: 14px; 
-        color: black !important;
-        list-style-type: disc;
+    div[data-testid="stMarkdownContainer"] .sub-header { 
+        font-style: italic !important; 
+        font-size: 14px !important; 
+        display: flex !important; 
+        justify-content: space-between !important;
+        margin-bottom: 5px !important;
     }
-    .resume-preview li { 
-        margin-bottom: 2px;
-        color: black !important;
+    div[data-testid="stMarkdownContainer"] .resume-preview ul { 
+        margin-top: 0 !important; 
+        padding-left: 20px !important; 
+        font-size: 14px !important;
+        list-style-type: disc !important;
+    }
+    div[data-testid="stMarkdownContainer"] .resume-preview li { 
+        margin-bottom: 2px !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -182,55 +178,59 @@ st.title("📄 Live Resume Preview")
 def get_bullets_html(text_input):
     if not text_input:
         return ""
-    return "".join(f'<li>{line}</li>' for line in text_input.split('\n') if line.strip())
+    bullets = []
+    for line in text_input.split('\n'):
+        if line.strip():
+            bullets.append(f'<li>{html.escape(line)}</li>')
+    return "".join(bullets)
 
-formatted_skills = skills_tech.replace('\n', '<br>')
+formatted_skills = html.escape(skills_tech).replace('\n', '<br>')
 
 html_content = f"""
 <div class="resume-preview">
-    <h1>{name}</h1>
-    <div class="contact-info">{contact_info}</div>
+    <h1>{html.escape(name)}</h1>
+    <div class="contact-info">{html.escape(contact_info)}</div>
     
     <h2>Professional Summary</h2>
-    <p>{summary}</p>
+    <p>{html.escape(summary)}</p>
 
     <h2>Technical Projects</h2>
-    <h3>{proj_1_role}</h3>
-    <div class="sub-header"><span>{proj_1_tech}</span><span>{proj_1_date}</span></div>
+    <h3>{html.escape(proj_1_role)}</h3>
+    <div class="sub-header"><span>{html.escape(proj_1_tech)}</span><span>{html.escape(proj_1_date)}</span></div>
     <ul>{get_bullets_html(proj_1_bullets)}</ul>
     
-    <h3>{proj_2_role}</h3>
-    <div class="sub-header"><span>{proj_2_tech}</span><span>{proj_2_date}</span></div>
+    <h3>{html.escape(proj_2_role)}</h3>
+    <div class="sub-header"><span>{html.escape(proj_2_tech)}</span><span>{html.escape(proj_2_date)}</span></div>
     <ul>{get_bullets_html(proj_2_bullets)}</ul>
 
     <h2>Professional Experience</h2>
-    <h3>{job_1_role}</h3>
-    <div class="sub-header"><span>{job_1_company}, {job_1_loc}</span><span>{job_1_date}</span></div>
+    <h3>{html.escape(job_1_role)}</h3>
+    <div class="sub-header"><span>{html.escape(job_1_company)}, {html.escape(job_1_loc)}</span><span>{html.escape(job_1_date)}</span></div>
     <ul>{get_bullets_html(job_1_bullets)}</ul>
 
-    <h3>{job_2_role}</h3>
-    <div class="sub-header"><span>{job_2_company}, {job_2_loc}</span><span>{job_2_date}</span></div>
+    <h3>{html.escape(job_2_role)}</h3>
+    <div class="sub-header"><span>{html.escape(job_2_company)}, {html.escape(job_2_loc)}</span><span>{html.escape(job_2_date)}</span></div>
     <ul>{get_bullets_html(job_2_bullets)}</ul>
 
-    <h3>{job_3_role}</h3>
-    <div class="sub-header"><span>{job_3_company}, {job_3_loc}</span><span>{job_3_date}</span></div>
+    <h3>{html.escape(job_3_role)}</h3>
+    <div class="sub-header"><span>{html.escape(job_3_company)}, {html.escape(job_3_loc)}</span><span>{html.escape(job_3_date)}</span></div>
     <ul>{get_bullets_html(job_3_bullets)}</ul>
 
     <h2>Leadership & Community</h2>
-    <h3>{lead_role}</h3>
-    <div class="sub-header"><span>{lead_org}</span><span>{lead_date}</span></div>
+    <h3>{html.escape(lead_role)}</h3>
+    <div class="sub-header"><span>{html.escape(lead_org)}</span><span>{html.escape(lead_date)}</span></div>
     <ul>{get_bullets_html(lead_bullets)}</ul>
 
     <h2>Education & Certifications</h2>
-    <p><strong>{degree}</strong>, {school} <span style="float:right">{edu_date}</span></p>
-    <p><strong>{degree_2}</strong>, {school_2} <span style="float:right">{edu_date_2}</span></p>
+    <p><strong>{html.escape(degree)}</strong>, {html.escape(school)} <span style="float:right">{html.escape(edu_date)}</span></p>
+    <p><strong>{html.escape(degree_2)}</strong>, {html.escape(school_2)} <span style="float:right">{html.escape(edu_date_2)}</span></p>
 
     <h2>Technical Skills</h2>
     <p>{formatted_skills}</p>
 </div>
 """
 
-# THIS IS THE KEY LINE THAT MAKES IT LOOK LIKE A RESUME:
+# Render with unsafe_allow_html=True
 st.markdown(html_content, unsafe_allow_html=True)
 
 # --- PDF GENERATION LOGIC ---
@@ -302,12 +302,10 @@ def create_pdf():
     pdf.set_font('Times', '', 11)
     pdf.multi_cell(0, 5, skills_tech)
 
-    # Using 'latin-1' with 'replace' prevents crashes from copy-pasted characters
     return pdf.output(dest='S').encode('latin-1', 'replace')
 
 # --- DOWNLOAD BUTTON ---
 st.write("---")
-# We generate the PDF bytes only when the script runs
 pdf_bytes = create_pdf()
 st.download_button(
     label="Download PDF Resume",
