@@ -5,6 +5,7 @@ from fpdf import FPDF
 st.set_page_config(layout="wide", page_title="The Pivot Resume Builder")
 
 # --- CUSTOM CSS FOR PREVIEW ---
+# This ensures the paper looks like paper, even in Dark Mode
 st.markdown("""
 <style>
     .resume-preview {
@@ -15,19 +16,20 @@ st.markdown("""
         border: 1px solid #ddd;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         border-radius: 5px;
+        margin-bottom: 20px;
     }
     .resume-preview h1 { 
         text-align: center; 
         text-transform: uppercase; 
         font-size: 24px; 
         margin-bottom: 5px; 
-        color: black;
+        color: black !important;
     }
     .resume-preview .contact-info { 
         text-align: center; 
         font-size: 14px; 
         margin-bottom: 20px; 
-        color: #333;
+        color: #333 !important;
     }
     .resume-preview h2 { 
         text-transform: uppercase; 
@@ -36,29 +38,37 @@ st.markdown("""
         margin-top: 20px; 
         margin-bottom: 10px; 
         padding-bottom: 2px;
-        color: black;
+        color: black !important;
     }
     .resume-preview h3 { 
         font-size: 14px; 
         font-weight: bold; 
         margin: 5px 0 2px 0; 
-        color: black;
+        color: black !important;
+    }
+    .resume-preview p {
+        color: black !important;
+        margin: 5px 0;
+        font-size: 14px;
     }
     .sub-header { 
         font-style: italic; 
         font-size: 14px; 
         display: flex; 
         justify-content: space-between; 
-        color: black;
+        color: black !important;
+        margin-bottom: 5px;
     }
     .resume-preview ul { 
         margin-top: 0; 
         padding-left: 20px; 
         font-size: 14px; 
-        color: black;
+        color: black !important;
+        list-style-type: disc;
     }
     .resume-preview li { 
-        margin-bottom: 2px; 
+        margin-bottom: 2px;
+        color: black !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -292,10 +302,12 @@ def create_pdf():
     pdf.set_font('Times', '', 11)
     pdf.multi_cell(0, 5, skills_tech)
 
+    # Using 'latin-1' with 'replace' prevents crashes from copy-pasted characters
     return pdf.output(dest='S').encode('latin-1', 'replace')
 
 # --- DOWNLOAD BUTTON ---
 st.write("---")
+# We generate the PDF bytes only when the script runs
 pdf_bytes = create_pdf()
 st.download_button(
     label="Download PDF Resume",
