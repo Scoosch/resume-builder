@@ -62,8 +62,8 @@ st.sidebar.title("Resume Inputs")
 
 with st.sidebar.expander("1. Personal Details", expanded=False):
     name = st.text_input("Full Name", "Joshua E. Doyle")
-    contact_info = st.text_input("Contact Line", "Robbinsdale, MN | (555) 123-4567 | scoosch@example.com")
-    summary = st.text_area("Professional Summary", "Culinary professional and self-taught technologist pivoting into IT. Proven ability to troubleshoot complex systems, manage time-sensitive workflows, and apply technical skills in networking and hardware management. CompTIA A+ Certified.")
+    contact_info = st.text_input("Contact Line", "Robbinsdale, MN | 763.234.0901 | scoosch@gmail.com")
+    summary = st.text_area("Professional Summary", "Dedicated and customer-oriented IT professional with a passion for technology. Recently certified CompTIA A+ with a strong understanding of hardware, software, and networking. Proven ability to provide excellent customer service and resolve technical issues quickly and efficiently. Pivoting from a background in operations management to a full-time IT role.")
 
 with st.sidebar.expander("2. Technical Projects (The Pivot)", expanded=False):
     st.info("💡 Highlight your Homelab & 3D Printing here.")
@@ -87,34 +87,36 @@ with st.sidebar.expander("3. Professional Experience", expanded=True):
     
     # Job 1 (Current)
     st.markdown("### Job 1: Current Role")
-    job_1_role = st.text_input("Job 1 Title", "Retail & Customer Service Associate")
-    job_1_company = st.text_input("Job 1 Company", "Local Frisbee Shop")
-    job_1_loc = st.text_input("Job 1 Location", "Minneapolis, MN")
-    job_1_date = st.text_input("Job 1 Date", "2024 - Present")
+    job_1_role = st.text_input("Job 1 Title", "Customer Service Professional")
+    job_1_company = st.text_input("Job 1 Company", "Gotta Go Gotta Throw")
+    job_1_loc = st.text_input("Job 1 Location", "Golden Valley, MN")
+    job_1_date = st.text_input("Job 1 Date", "Aug 2020 - Present") # Updated date based on resume start
     job_1_bullets = st.text_area("Job 1 Details", 
-        "Manage inventory tracking and point-of-sale systems accuracy.\n"
-        "Provide technical product advice, requiring rapid learning of new inventory specs.")
+        "Answer customer service emails and resolve technical product inquiries.\n"
+        "Maintain inventory accuracy and organize staff to ensure efficient order fulfillment.\n"
+        "Troubleshoot shipping logistics and packing workflows to ensure safe delivery.")
 
     # Job 2 (Arvig - IT Experience)
     st.markdown("### Job 2: Relevant IT Experience")
     job_2_role = st.text_input("Job 2 Title", "Help Desk Technician")
-    job_2_company = st.text_input("Job 2 Company", "Arvig")
-    job_2_loc = st.text_input("Job 2 Location", "Minneapolis, MN")
-    job_2_date = st.text_input("Job 2 Date", "2023 - 2024")
+    job_2_company = st.text_input("Job 2 Company", "Arvig Enterprises")
+    job_2_loc = st.text_input("Job 2 Location", "Maple Grove, MN")
+    job_2_date = st.text_input("Job 2 Date", "Feb 2018 - Feb 2020")
     job_2_bullets = st.text_area("Job 2 Details", 
         "Resolved Tier 1 technical issues regarding hardware, software, and network connectivity.\n"
         "Managed user accounts and permissions via Active Directory.\n"
         "Utilized ticketing systems to document incidents and ensure timely resolution SLAs.")
 
-    # Job 3 (Chef - Management)
+    # Job 3 (Pizza Luce - Management)
     st.markdown("### Job 3: Management Experience")
-    job_3_role = st.text_input("Job 3 Title", "Executive Chef / Kitchen Manager")
-    job_3_company = st.text_input("Job 3 Company", "High-Volume Restaurant Group")
-    job_3_loc = st.text_input("Job 3 Location", "Minneapolis, MN")
-    job_3_date = st.text_input("Job 3 Date", "2015 - 2023")
+    job_3_role = st.text_input("Job 3 Title", "Restaurant Manager")
+    job_3_company = st.text_input("Job 3 Company", "Pizza Lucé")
+    job_3_loc = st.text_input("Job 3 Location", "Hopkins, MN")
+    job_3_date = st.text_input("Job 3 Date", "Feb 2015 - Aug 2017")
     job_3_bullets = st.text_area("Job 3 Details", 
-        "Managed back-of-house operations, including staff scheduling, inventory logistics, and vendor relations.\n"
-        "Implemented cost-control systems reducing waste by 15% through strict inventory tracking.")
+        "Managed a diverse team working in a fast-paced environment.\n"
+        "Creatively led company projects such as the Pizza Lucé Block Party and off-site events.\n"
+        "Handled financial reporting and large cash deposits with 100% accuracy.")
 
 with st.sidebar.expander("4. Leadership & Community", expanded=False):
     lead_role = st.text_input("Leadership Role", "League Coordinator")
@@ -127,7 +129,12 @@ with st.sidebar.expander("4. Leadership & Community", expanded=False):
 with st.sidebar.expander("5. Education & Skills", expanded=False):
     degree = st.text_input("Degree/Cert", "CompTIA A+ Certification")
     school = st.text_input("Institution", "CompTIA")
-    edu_date = st.text_input("Edu Date", "2023")
+    edu_date = st.text_input("Edu Date", "July 2023 - July 2026")
+    
+    degree_2 = st.text_input("Degree 2", "A.A.S. Restaurant Management")
+    school_2 = st.text_input("Institution 2", "Le Cordon Bleu College of Culinary Arts")
+    edu_date_2 = st.text_input("Edu Date 2", "May 2007")
+    
     skills_tech = st.text_area("Technical Skills", "Hardware: PC Building, Troubleshooting, 3D Printers\nNetworking: TCP/IP, DNS, DHCP, Cisco IOS, Active Directory\nSoftware: Windows, Linux (Ubuntu), Proxmox VE, ServiceNow")
 
 # --- LIVE PREVIEW GENERATION ---
@@ -174,6 +181,7 @@ html_content = f"""
 
     <h2>Education & Certifications</h2>
     <p><strong>{degree}</strong>, {school} <span style="float:right">{edu_date}</span></p>
+    <p><strong>{degree_2}</strong>, {school_2} <span style="float:right">{edu_date_2}</span></p>
 
     <h2>Technical Skills</h2>
     <p>{formatted_skills}</p>
@@ -219,41 +227,4 @@ def create_pdf():
         for line in job_1_bullets.split('\n'): pdf.bullet_point(line)
         pdf.ln(3)
     if job_2_role:
-        pdf.section_content_header(job_2_role, job_2_company, job_2_loc, job_2_date)
-        for line in job_2_bullets.split('\n'): pdf.bullet_point(line)
-        pdf.ln(3)
-    if job_3_role:
-        pdf.section_content_header(job_3_role, job_3_company, job_3_loc, job_3_date)
-        for line in job_3_bullets.split('\n'): pdf.bullet_point(line)
-        pdf.ln(3)
-
-    # Leadership
-    if lead_role:
-        pdf.section_title("Leadership & Community")
-        pdf.section_content_header(lead_role, lead_org, "", lead_date)
-        for line in lead_bullets.split('\n'): pdf.bullet_point(line)
-        pdf.ln(3)
-
-    # Education & Skills
-    pdf.section_title("Education & Skills")
-    pdf.set_font('Times', '', 11)
-    if degree:
-        pdf.cell(140, 5, f"{degree}, {school}", 0, 0)
-        pdf.cell(0, 5, edu_date, 0, 1, 'R')
-    pdf.ln(3)
-    pdf.set_font('Times', 'B', 11)
-    pdf.cell(0, 5, "Technical Skills:", 0, 1)
-    pdf.set_font('Times', '', 11)
-    pdf.multi_cell(0, 5, skills_tech)
-
-    return pdf.output(dest='S').encode('latin-1')
-
-# --- DOWNLOAD BUTTON ---
-st.write("---")
-pdf_bytes = create_pdf()
-st.download_button(
-    label="Download PDF Resume",
-    data=pdf_bytes,
-    file_name="resume.pdf",
-    mime="application/pdf"
-)
+        pdf.section_content_header(job_2_role, job_2_company
