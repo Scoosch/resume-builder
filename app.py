@@ -133,6 +133,9 @@ with st.sidebar.expander("5. Education & Skills", expanded=False):
 # --- LIVE PREVIEW GENERATION ---
 st.title("📄 Live Resume Preview")
 
+# PRE-FORMATTING TO PREVENT SYNTAX ERRORS
+formatted_skills = skills_tech.replace('\n', '<br>')
+
 # Constructing HTML for Preview
 html_content = f"""
 <div class="resume-preview">
@@ -173,4 +176,84 @@ html_content = f"""
     <p><strong>{degree}</strong>, {school} <span style="float:right">{edu_date}</span></p>
 
     <h2>Technical Skills</h2>
-    <p>{skills_tech.
+    <p>{formatted_skills}</p>
+</div>
+"""
+st.markdown(html_content, unsafe_allow_html=True)
+
+# --- PDF GENERATION LOGIC ---
+def create_pdf():
+    pdf = PDF()
+    pdf.add_page()
+    pdf.set_margins(20, 20, 20)
+    
+    # Header
+    pdf.set_font('Times', 'B', 24)
+    pdf.cell(0, 10, name.upper(), 0, 1, 'C')
+    pdf.set_font('Times', '', 10)
+    pdf.cell(0, 5, contact_info, 0, 1, 'C')
+    pdf.ln(5)
+
+    # Summary
+    if summary:
+        pdf.section_title("Professional Summary")
+        pdf.set_font('Times', '', 11)
+        pdf.multi_cell(0, 5, summary)
+        pdf.ln(3)
+
+    # Technical Projects
+    pdf.section_title("Technical Projects")
+    if proj_1_role:
+        pdf.section_content_header(proj_1_role, proj_1_tech, "", proj_1_date)
+        for line in proj_1_bullets.split('\n'): pdf.bullet_point(line)
+        pdf.ln(3)
+    if proj_2_role:
+        pdf.section_content_header(proj_2_role, proj_2_tech, "", proj_2_date)
+        for line in proj_2_bullets.split('\n'): pdf.bullet_point(line)
+        pdf.ln(3)
+
+    # Experience
+    pdf.section_title("Professional Experience")
+    if job_1_role:
+        pdf.section_content_header(job_1_role, job_1_company, job_1_loc, job_1_date)
+        for line in job_1_bullets.split('\n'): pdf.bullet_point(line)
+        pdf.ln(3)
+    if job_2_role:
+        pdf.section_content_header(job_2_role, job_2_company, job_2_loc, job_2_date)
+        for line in job_2_bullets.split('\n'): pdf.bullet_point(line)
+        pdf.ln(3)
+    if job_3_role:
+        pdf.section_content_header(job_3_role, job_3_company, job_3_loc, job_3_date)
+        for line in job_3_bullets.split('\n'): pdf.bullet_point(line)
+        pdf.ln(3)
+
+    # Leadership
+    if lead_role:
+        pdf.section_title("Leadership & Community")
+        pdf.section_content_header(lead_role, lead_org, "", lead_date)
+        for line in lead_bullets.split('\n'): pdf.bullet_point(line)
+        pdf.ln(3)
+
+    # Education & Skills
+    pdf.section_title("Education & Skills")
+    pdf.set_font('Times', '', 11)
+    if degree:
+        pdf.cell(140, 5, f"{degree}, {school}", 0, 0)
+        pdf.cell(0, 5, edu_date, 0, 1, 'R')
+    pdf.ln(3)
+    pdf.set_font('Times', 'B', 11)
+    pdf.cell(0, 5, "Technical Skills:", 0, 1)
+    pdf.set_font('Times', '', 11)
+    pdf.multi_cell(0, 5, skills_tech)
+
+    return pdf.output(dest='S').encode('latin-1')
+
+# --- DOWNLOAD BUTTON ---
+st.write("---")
+pdf_bytes = create_pdf()
+st.download_button(
+    label="Download PDF Resume",
+    data=pdf_bytes,
+    file_name="resume.pdf",
+    mime="application/pdf"
+)
