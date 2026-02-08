@@ -18,7 +18,8 @@ def improve_text(text, context_type, api_key):
 
     try:
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        # CHANGED: Switched to 'gemini-pro' for better compatibility
+        model = genai.GenerativeModel('gemini-pro')
         
         prompt = f"""
         You are an expert resume writer helping an IT professional pivot from hospitality/service to Technology.
