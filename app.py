@@ -1,9 +1,41 @@
 import streamlit as st
 from fpdf import FPDF
 import html
+import google.generativeai as genai
 
 # --- CONFIGURATION & PAGE SETUP ---
 st.set_page_config(layout="wide", page_title="The Pivot Resume Builder")
+
+# --- GEMINI AI SETUP ---
+def improve_text(text, context_type, api_key):
+    if not api_key:
+        st.warning("Please enter a Gemini API Key in the sidebar to use AI features.")
+        return text
+    
+    if not text:
+        st.warning("Please enter some text to improve.")
+        return text
+
+    try:
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        
+        prompt = f"""
+        You are an expert resume writer helping an IT professional pivot from hospitality/service to Technology.
+        Rewrite the following {context_type} to be more professional, result-oriented, and impactful.
+        Use active verbs and quantify results where possible. Keep it concise.
+        
+        Original text:
+        "{text}"
+        """
+        
+        with st.spinner(f"AI is rewriting your {context_type}..."):
+            response = model.generate_content(prompt)
+            return response.text.strip()
+            
+    except Exception as e:
+        st.error(f"AI Error: {str(e)}")
+        return text
 
 # --- PDF GENERATOR CLASS ---
 class PDF(FPDF):
@@ -32,27 +64,50 @@ class PDF(FPDF):
 # --- SIDEBAR INPUTS ---
 st.sidebar.title("Resume Inputs")
 
+with st.sidebar.expander("🔑 AI Settings", expanded=True):
+    api_key = st.text_input("Gemini API Key", type="password", help="Get your key from aistudio.google.com")
+    st.caption("Enter key to enable 'Improve with AI' buttons.")
+
 with st.sidebar.expander("1. Personal Details", expanded=False):
     name = st.text_input("Full Name", "Joshua Doyle")
     contact_info = st.text_input("Contact Line", "2600 York Ave N, Robbinsdale, MN 55422 | 763.234.0901 | scoosch@gmail.com")
-    summary = st.text_area("Professional Summary", "Dedicated and customer-oriented IT professional with a passion for technology. Recently certified CompTIA A+ with a strong understanding of hardware, software, and networking. Proven ability to provide excellent customer service and resolve technical issues quickly and efficiently in fast-paced environments.")
+    
+    st.write("Professional Summary")
+    summary = st.text_area("Summary Content", "Dedicated IT professional pivoting from a strong background in service management. CompTIA A+ certified with practical home-lab experience in virtualization, networking, and hardware diagnostics. Proven ability to troubleshoot complex mechanical and technical issues, from automotive systems to enterprise networks.", height=150, label_visibility="collapsed")
+    if st.button("✨ Improve Summary with AI"):
+        updated_summary = improve_text(summary, "professional summary", api_key)
+        if updated_summary != summary:
+            st.code(updated_summary, language="text")
+            st.info("Copy the text above and paste it into the box if you like it!")
 
 with st.sidebar.expander("2. Technical Projects (The Pivot)", expanded=False):
-    st.info("💡 These projects bridge the gap between your detailed history and your future in IT.")
+    st.info("💡 Projects bridging your history to your IT future.")
+    
+    # Project 1
     proj_1_role = st.text_input("Project 1 Role", "Home Lab Administrator")
-    proj_1_tech = st.text_input("Project 1 Tech", "Proxmox, OPNsense, Cisco Networking")
+    proj_1_tech = st.text_input("Project 1 Tech", "Proxmox, OPNsense, Cisco, Raspberry Pi")
     proj_1_date = st.text_input("Project 1 Date", "2024 - Present")
-    proj_1_bullets = st.text_area("Project 1 Details", 
-        "Designed and deployed a virtualized home lab environment using Proxmox VE.\n"
-        "Configured OPNsense firewall with VLANs to segregate IoT traffic.\n"
-        "Managed Cisco Catalyst switches to learn CLI command structure and layer 2 protocols.")
+    
+    p1_default = ("Designed and deployed a virtualized home lab using Proxmox VE to host various services.\n"
+                  "Configured OPNsense firewall with VLANs to segregate IoT traffic from main network.\n"
+                  "Managed Cisco Catalyst switches via CLI to implement Layer 2 security protocols.")
+    st.write("Project 1 Details")
+    proj_1_bullets = st.text_area("P1 Bullets", p1_default, height=150, label_visibility="collapsed")
+    if st.button("✨ Improve Project 1"):
+        st.code(improve_text(proj_1_bullets, "technical project bullet points", api_key))
 
-    proj_2_role = st.text_input("Project 2 Role", "3D Printing & Hardware Prototyping")
-    proj_2_tech = st.text_input("Project 2 Tech", "Bambu Lab, CAD, G-Code")
+    # Project 2
+    proj_2_role = st.text_input("Project 2 Role", "Hardware Prototyping & Fabrication")
+    proj_2_tech = st.text_input("Project 2 Tech", "Bambu Lab, Orca Slicer, CAD")
     proj_2_date = st.text_input("Project 2 Date", "2023 - Present")
-    proj_2_bullets = st.text_area("Project 2 Details", 
-        "Maintained and calibrated Bambu Lab 3D printers for high-precision manufacturing.\n"
-        "Troubleshot hardware failures involving extruder assemblies and thermal runaway protection.")
+    
+    p2_default = ("Optimized print settings in Orca Slicer for complex geometries and functional parts.\n"
+                  "Maintained and calibrated Bambu Lab printers, troubleshooting extruder and thermal sensor failures.\n"
+                  "Designed and fabricated custom organizers and mechanical parts using CAD software.")
+    st.write("Project 2 Details")
+    proj_2_bullets = st.text_area("P2 Bullets", p2_default, height=150, label_visibility="collapsed")
+    if st.button("✨ Improve Project 2"):
+        st.code(improve_text(proj_2_bullets, "technical project bullet points", api_key))
 
 with st.sidebar.expander("3. Professional Experience", expanded=True):
     # Job 1
@@ -61,10 +116,13 @@ with st.sidebar.expander("3. Professional Experience", expanded=True):
     job_1_company = st.text_input("Job 1 Company", "Arvig Enterprises")
     job_1_loc = st.text_input("Job 1 Location", "Maple Grove/Edina, MN")
     job_1_date = st.text_input("Job 1 Date", "March 2024 - January 2025") 
-    job_1_bullets = st.text_area("Job 1 Details", 
-        "Provided technical support for internet, TV, and phone services, troubleshooting connectivity and hardware issues.\n"
-        "Diagnosed and resolved Tier 1 customer incidents using ticketing systems to track resolution status.\n"
-        "Guided users through remote troubleshooting steps to restore service functionality.")
+    
+    j1_default = ("Provided technical support for internet, TV, and phone services, troubleshooting connectivity issues.\n"
+                  "Diagnosed and resolved Tier 1 customer incidents using ticketing systems.\n"
+                  "Guided users through remote troubleshooting steps to restore service functionality.")
+    job_1_bullets = st.text_area("Job 1 Details", j1_default)
+    if st.button("✨ Improve Job 1"):
+        st.code(improve_text(job_1_bullets, "job duty bullet points", api_key))
 
     # Job 2
     st.markdown("### Job 2: Remote Communications")
@@ -88,7 +146,7 @@ with st.sidebar.expander("3. Professional Experience", expanded=True):
         "Organized warehouse inventory and coordinated shipping logistics for accurate order fulfillment.\n"
         "Maintained store organization and led team efforts to ensure positive customer experiences.")
 
-    # Job 4 (New from History)
+    # Job 4
     st.markdown("### Job 4: Hospitality Management")
     job_4_role = st.text_input("Job 4 Title", "Restaurant Manager")
     job_4_company = st.text_input("Job 4 Company", "Patrick's Restaurant and Bakery")
@@ -99,7 +157,7 @@ with st.sidebar.expander("3. Professional Experience", expanded=True):
         "Managed scheduling, inventory control, and vendor relationships to optimize operational efficiency.\n"
         "Resolved escalated customer issues with a focus on retention and satisfaction.")
 
-    # Job 5 (New from History)
+    # Job 5
     st.markdown("### Job 5: Hospitality Management")
     job_5_role = st.text_input("Job 5 Title", "Restaurant Manager")
     job_5_company = st.text_input("Job 5 Company", "Pizza Lucé")
@@ -127,7 +185,11 @@ with st.sidebar.expander("5. Education & Skills", expanded=False):
     school_2 = st.text_input("Institution 2", "Le Cordon Bleu College of Culinary Arts")
     edu_date_2 = st.text_input("Edu Date 2", "May 2007")
     
-    skills_tech = st.text_area("Technical Skills", "Hardware: PC Building, Troubleshooting, Hydraulic Testing\nNetworking: TCP/IP, DNS, DHCP, Cisco IOS, Active Directory\nSoftware: Windows, Linux (Ubuntu), Proxmox VE, ServiceNow")
+    # Updated Skills based on known user data
+    skills_default = ("Hardware: PC Building, Raspberry Pi, Automotive Diagnostics (VCDS), Hydraulic Testing\n"
+                      "Networking: TCP/IP, DNS, DHCP, Cisco IOS, Active Directory, OPNsense\n"
+                      "Software: Windows, Linux (Ubuntu), Proxmox VE, ServiceNow, Orca Slicer, Home Assistant")
+    skills_tech = st.text_area("Technical Skills", skills_default)
 
 # --- LIVE PREVIEW GENERATION ---
 st.title("📄 Live Resume Preview")
@@ -150,11 +212,7 @@ html_content = f"""
 <html>
 <head>
 <style>
-    body {{
-        margin: 0;
-        padding: 20px;
-        background-color: #f5f5f5;
-    }}
+    body {{ margin: 0; padding: 20px; background-color: #f5f5f5; }}
     .resume-preview {{
         font-family: 'Times New Roman', Times, serif;
         background-color: white;
@@ -166,58 +224,14 @@ html_content = f"""
         max-width: 850px;
         margin: 0 auto;
     }}
-    .resume-preview h1 {{ 
-        text-align: center; 
-        text-transform: uppercase; 
-        font-size: 24px; 
-        margin-bottom: 5px; 
-        color: black;
-    }}
-    .resume-preview .contact-info {{ 
-        text-align: center; 
-        font-size: 14px; 
-        margin-bottom: 20px; 
-        color: #333;
-    }}
-    .resume-preview h2 {{ 
-        text-transform: uppercase; 
-        font-size: 16px; 
-        border-bottom: 1px solid black; 
-        margin-top: 20px; 
-        margin-bottom: 10px; 
-        padding-bottom: 2px;
-        color: black;
-    }}
-    .resume-preview h3 {{ 
-        font-size: 14px; 
-        font-weight: bold; 
-        margin: 5px 0 2px 0; 
-        color: black;
-    }}
-    .resume-preview p {{
-        color: black;
-        margin: 5px 0;
-        font-size: 14px;
-    }}
-    .sub-header {{ 
-        font-style: italic; 
-        font-size: 14px; 
-        display: flex; 
-        justify-content: space-between;
-        color: black;
-        margin-bottom: 5px;
-    }}
-    .resume-preview ul {{ 
-        margin-top: 0; 
-        padding-left: 20px; 
-        font-size: 14px;
-        color: black;
-        list-style-type: disc;
-    }}
-    .resume-preview li {{ 
-        margin-bottom: 2px;
-        color: black;
-    }}
+    .resume-preview h1 {{ text-align: center; text-transform: uppercase; font-size: 24px; margin-bottom: 5px; color: black; }}
+    .resume-preview .contact-info {{ text-align: center; font-size: 14px; margin-bottom: 20px; color: #333; }}
+    .resume-preview h2 {{ text-transform: uppercase; font-size: 16px; border-bottom: 1px solid black; margin-top: 20px; margin-bottom: 10px; padding-bottom: 2px; color: black; }}
+    .resume-preview h3 {{ font-size: 14px; font-weight: bold; margin: 5px 0 2px 0; color: black; }}
+    .resume-preview p {{ color: black; margin: 5px 0; font-size: 14px; }}
+    .sub-header {{ font-style: italic; font-size: 14px; display: flex; justify-content: space-between; color: black; margin-bottom: 5px; }}
+    .resume-preview ul {{ margin-top: 0; padding-left: 20px; font-size: 14px; color: black; list-style-type: disc; }}
+    .resume-preview li {{ margin-bottom: 2px; color: black; }}
 </style>
 </head>
 <body>
